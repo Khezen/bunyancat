@@ -1,0 +1,34 @@
+{
+  "name": "bunyancat",
+  "version": "1.0.0",
+  "description": "extended bunyan logger",
+  "main": "bunyan.js",
+  "scripts":{
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khezen/bunyancat"
+  },
+  "bugs": {
+    "url": "https://github.com/khezen/bunyancat/issues"
+  },
+  "homepage": "https://github.com/khezen/bunyancat#readme",
+  "keywords": [
+    "logger",
+    "bunyan",
+    "logstash"
+  ],
+  "dependencies": {
+    "bunyan": "^1.8.5",
+    "bunyan-logstash-tcp": "^0.3.5",
+    "bunyan-rollbar": "^0.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "jshint-path-reporter": "conztanz/jshint-path-reporter",
+    "mocha": "^3.2.0"
+  },
+  "author": "Guillaume Simonneau",
+  "license": "MIT"
+}
