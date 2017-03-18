@@ -4,6 +4,7 @@ const bunyan = require("bunyan");
 const bunyanLogstash = require("bunyan-logstash-tcp");
 const bunyanRollbar = require('bunyan-rollbar');
 const bunyanKafka = require("bunyan-kafka");
+const bunyanSlack = require("bunyan-slack");
 bunyan.stdSerializers.err = bunyanRollbar.stdSerializers.err;
 
 module.exports = {
@@ -103,7 +104,7 @@ module.exports = {
       let port = options.kafka.port ? options.kafka.port : 2181;
       let topic = options.kafka.topic ? options.kafka.topic : `log-${options.name}-topic`;
       let level = options.kafka.level ? options.kafka.level : "info";
-      let stream = new bunyanKafka.Stream({
+      let stream = new bunyanKafka({
         kafka: {
           connectionString: `${host}:${port}`
         },
@@ -111,6 +112,28 @@ module.exports = {
       });
       stream.name = "kafka";
       handleConFailures(stream);
+      return {
+        type: "raw",
+        level: level,
+        stream: stream
+      };
+    };
+
+    const slackStream = options => {
+      function check(prop){
+        if(!options.slack[prop]){
+          throw new Error(`wrong or missing slack ${prop}`);
+        }
+      }
+      check("webhook");
+      check("channel");
+      check("username");
+      let level = options.kafka.level ? options.kafka.level : "error";
+      let stream = new bunyanSlack({
+    		webhook_url: "your_webhook_url",
+    		channel: "#your_channel",
+    		username: "your_username",
+    	});
       return {
         type: "raw",
         level: level,
@@ -139,6 +162,14 @@ module.exports = {
     if (options && options.kafka) {
       log.kafka = kafkaStream(options);
       log.addStream(log.kafka);
+    }
+    if(options && options.slack) {
+      try{
+        log.slack = slackStream(options);
+        log.addStream(log.slack);
+      }catch(err){
+        log.warn(err);
+      }
     }
 
     return log;
