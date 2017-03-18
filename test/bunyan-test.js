@@ -14,7 +14,7 @@ function test(testCase) {
   assert.equal(match, true);
 }
 
-describe("ctz-bunyan", function() {
+describe("bunyancat", function() {
   describe("std", function() {
     const testCases = [{ in: null,
         expected: {

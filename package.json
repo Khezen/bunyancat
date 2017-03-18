@@ -1,6 +1,6 @@
 {
   "name": "bunyancat",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "extended bunyan logger",
   "main": "bunyan.js",
   "scripts": {
