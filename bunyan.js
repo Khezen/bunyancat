@@ -3,6 +3,7 @@
 const bunyan = require("bunyan");
 const bunyanLogstash = require("bunyan-logstash-tcp");
 const bunyanRollbar = require('bunyan-rollbar');
+const bunyanKafka = require("bunyan-kafka");
 bunyan.stdSerializers.err = bunyanRollbar.stdSerializers.err;
 
 module.exports = {
@@ -97,6 +98,26 @@ module.exports = {
       };
     };
 
+    const kafkaStream = options => {
+      let host = options.kafka.host ? options.kafka.host : "localhost";
+      let port = options.kafka.port ? options.kafka.port : 2181;
+      let topic = options.kafka.topic ? options.kafka.topic : `log-${options.name}-topic`;
+      let level = options.kafka.level ? options.kafka.level : "info";
+      let stream = new bunyanKafka.Stream({
+        kafka: {
+          connectionString: `${host}:${port}`
+        },
+        topic: topic
+      });
+      stream.name = "kafka";
+      handleConFailures(stream);
+      return {
+        type: "raw",
+        level: level,
+        stream: stream
+      };
+    };
+
     log.stdout = stdoutStream(options);
     log.addStream(log.stdout);
     if (options && options.rotatingFile) {
@@ -114,6 +135,10 @@ module.exports = {
       }catch(err){
         log.warn(err);
       }
+    }
+    if (options && options.kafka) {
+      log.kafka = kafkaStream(options);
+      log.addStream(log.kafka);
     }
 
     return log;
