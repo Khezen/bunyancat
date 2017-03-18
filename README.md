@@ -28,6 +28,18 @@ let log = bunyan.createLogger({
   rollbar: {
     token: "rollback access token",
     rollbarOptions: {} // Options to pass to rollbar.init()
+  },
+  kafka: {
+    host: "localhost",
+    port: 2181,
+    level: "info",
+    topic: "log-helloworld-topic"
+  },
+  slack: {
+    webhook: "slack webhook url",
+    channel: "slack channel",
+    username: "bunyancat",
+    level: "error"
   }
 });
 
